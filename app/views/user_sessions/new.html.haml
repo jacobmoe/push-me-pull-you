@@ -1,0 +1,10 @@
+%h2 Login
+
+= form_for :session, :url => {:action => :create} do |form|
+  %label username
+  = form.text_field :username, :autocomplete => :off
+  %label password
+  = form.password_field :password, :autocomplete => :off
+  = form.submit
+
+= link_to 'sign up', signup_path

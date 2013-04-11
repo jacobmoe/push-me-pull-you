@@ -1,0 +1,16 @@
+/.bundle
+/log/*.log
+/tmp
+/config/database.yml
+public/system/*
+.DS_Store
+/.sass-cache
+db/schema.rb
+db/structure.sql
+db/dumps
+.rvmrc
+config/database.yml
+config/settings.yml
+vendor/cache
+public/test/*
+public/system/*
