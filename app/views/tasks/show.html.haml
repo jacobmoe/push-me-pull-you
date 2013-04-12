@@ -1,0 +1,5 @@
+%h2= @task.title
+
+%p= @task.description
+%p= "#{@task.length} hours"
+%p= link_to 'edit task', edit_task_path(@task)
