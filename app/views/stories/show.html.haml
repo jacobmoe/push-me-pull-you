@@ -1,0 +1,7 @@
+%p= @story.description
+%ul
+  - @story.tasks.each do |task|
+    %li
+      = task.description
+
+= link_to 'edit', edit_story_path(@story)

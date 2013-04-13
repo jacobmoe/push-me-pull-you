@@ -1,6 +1,10 @@
 class Task < ActiveRecord::Base
 
-  validates :title, :presence => true
+  # -- validations ----------------------------------------------------------
+
   validates :description, :presence => true
+
+  # -- relationships --------------------------------------------------------
+  belongs_to :story
 
 end

@@ -1,0 +1,8 @@
+one:
+  description: the first story description
+  estimate: 1
+
+two:
+  description: the second story description
+
+

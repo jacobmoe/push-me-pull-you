@@ -1,0 +1,18 @@
+%h1 Stories
+
+= link_to 'new story', new_story_path
+
+%ul
+  - @stories.each do |story|
+    %li
+      = story.description
+      = story.created_at.strftime('%B %d, %Y, %T')
+      = link_to 'edit', edit_story_path(story)
+      = link_to 'delete', story_path(story), :method => :delete, :data => {:confirm => 'delete story?'}
+      = link_to 'add task', new_story_task_path(story)
+      %ul
+        - story.tasks.order('created_at DESC').each do |task|
+          %li
+            = task.description
+            = link_to 'edit', edit_story_task_path(story, task)
+            = link_to 'delete', story_task_path(story, task), :method => :delete, :data => {:confirm => 'delete task?'}

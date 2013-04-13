@@ -1,93 +1,101 @@
 require 'test_helper'
 
-class TasksControllerTest < ActionController::TestCase
+class StoriesControllerTest < ActionController::TestCase
 
   def setup
     login_user(@user = users(:one))
     @story = stories(:one)
-    @task = tasks(:one)
+  end
+
+  def test_get_index
+    get :index
+    assert_response :success
+    assert_template :index
+    assert assigns(:stories)
+    assert_equal 2, assigns(:stories).count
   end
 
   def test_get_new
-    get :new, :story_id => @story
+    get :new
     assert_response :success
     assert_template :new
   end
 
   def test_get_new_not_logged_in
     logout_user
-    get :new, :story_id => @story
+    get :new
     assert_response :redirect
     assert_redirected_to login_path
     assert_equal 'Please login first', flash[:error]
   end
 
   def test_creation
-    assert_difference 'Task.count' do
-      post :create, :story_id => @story, :task => {
-        :description => 'test task description'
+    assert_difference 'Story.count' do
+      post :create, :story => {
+        :description => 'test story description',
+        :estimate => 1
       }
       assert_response :redirect
-      assert assigns(:task)
+      assert assigns(:story)
       assert_redirected_to stories_path
     end
   end
 
   def test_creation_failure
-    assert_no_difference 'Task.count' do
-      post :create, :story_id => @story, :task => { 
+    assert_no_difference 'Story.count' do
+      post :create, :story => { 
         :description => ''
       }
       assert_response :success
       assert_template :new
-      assert_equal 'Task creation failed. Correct highlighted fields.', flash[:error]
+      assert_equal 'Story creation failed. Correct highlighted fields.', flash[:error]
     end
   end
 
   def test_get_edit
-    get :edit, :story_id => @story, :id => @task
-    assert assigns(:task)
+    get :edit, :id => @story
+    assert assigns(:story)
     assert_response :success
     assert_template :edit
   end
 
   def test_get_edit_when_not_logged_in
     logout_user
-    get :edit, :story_id => @story, :id => @task
+    get :edit, :id => @story
     assert_response :redirect
     assert_redirected_to login_path
     assert_equal 'Please login first', flash[:error]
   end
 
   def test_update
-    put :update, :story_id => @story, :id => @task, :task => {
+    put :update, :id => @story, :story => {
       :description => 'Updated'
     }
     assert_response :redirect
     assert_redirected_to stories_path
-    assert_equal 'Task updated', flash[:notice]
-    @task.reload
-    assert_equal 'Updated', @task.description
+    assert_equal 'Story updated', flash[:notice]
+    @story.reload
+    assert_equal 'Updated', @story.description
   end
   
   def test_update_failure
-    task = tasks(:one)
-    put :update, :story_id => @story, :id => task, :task => {
+    story = stories(:one)
+    put :update, :id => story, :story => {
       :description => ''
     }
     assert_response :success
     assert_template :edit
-    assert_equal 'Failed to update task', flash[:error]
-    task.reload
-    assert_not_equal '', task.description
+    assert_equal 'Failed to update story', flash[:error]
+    story.reload
+    assert_not_equal '', story.description
   end
 
   def test_destroy
-    assert_difference 'Task.count', -1 do
-      delete :destroy, :story_id => @story, :id => @task
+    assert_difference 'Story.count', -1 do
+      delete :destroy, :id => @story
       assert_response :redirect
       assert_redirected_to stories_path
-      assert_equal 'Task deleted', flash[:notice]
+      assert_equal 'Story deleted', flash[:notice]
     end
   end
 

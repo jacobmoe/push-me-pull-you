@@ -1,8 +1,7 @@
 one:
-  title: the first title
   description: the first description
-  length: 1
+  story: one
 
 two:
-  title: the second title
   description: the second description
+  story: two
