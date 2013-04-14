@@ -16,6 +16,12 @@ class Story < ActiveRecord::Base
 
   # -- instance_methods -----------------------------------------------------
 
+  def push(user)
+    user_story = self.user_stories.where(:user_id => user).first
+    user_story.distance += 1
+    user_story.save
+  end
+
   private
 
   def add_all_users

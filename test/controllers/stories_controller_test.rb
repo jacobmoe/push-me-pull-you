@@ -103,4 +103,23 @@ class StoriesControllerTest < ActionController::TestCase
     end
   end
 
+  def test_push
+    user = users(:two)
+    user.stories << @story
+    user.save
+
+    user_story = @story.user_stories.where(:user_id => user).first
+    assert_equal 0, user_story.distance
+
+    post :push, {
+      :id => @story.id, 
+      :user => {
+        :id => user.id
+      }
+    }
+
+    user_story.reload
+    assert_equal 1, user_story.distance
+  end
+
 end

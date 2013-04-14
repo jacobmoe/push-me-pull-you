@@ -4,12 +4,3 @@
 = link_to 'Create a new story', new_story_path
 = link_to 'View stories', stories_path
 = link_to 'Edit your profile', edit_user_path(@user)
-
-%ul
-  - @user.stories.each do |story|
-    %li
-      = story.description
-      %ul
-        - story.tasks.each do |task|
-          %li
-            = task.description

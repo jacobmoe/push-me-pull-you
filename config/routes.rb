@@ -16,6 +16,9 @@ PushMePullYou::Application.routes.draw do
   end
   resources :stories do
     resources :tasks, :except => [:show, :index]
+    member do
+      post :push
+    end
   end
 
 end

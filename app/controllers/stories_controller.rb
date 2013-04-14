@@ -2,7 +2,7 @@ class StoriesController < ApplicationController
 
   before_filter :story_params, :only => [:create, :update]
   before_filter :build_story, :only => [:create]
-  before_filter :load_story, :only => [:show, :edit, :update, :destroy]
+  before_filter :load_story, :only => [:show, :edit, :update, :destroy, :push]
 
   def index
     @stories = Story.all.order('created_at DESC')
@@ -34,6 +34,13 @@ class StoriesController < ApplicationController
   def destroy
     @story.destroy
     flash[:notice] = 'Story deleted'
+    redirect_to stories_path
+  end
+
+  def push
+    user = User.find(params[:user][:id])
+    @story.push(user)
+    flash[:notice] = "Story pushed towards #{user.username}"
     redirect_to stories_path
   end
 
