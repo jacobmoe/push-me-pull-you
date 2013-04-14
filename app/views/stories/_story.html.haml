@@ -5,13 +5,19 @@
   = link_to 'delete', story_path(story), :method => :delete, :data => {:confirm => 'delete story?'}
   = link_to 'add task', new_story_task_path(story)
 
-  = form_for :user, :url => push_story_path(story) do |f|
-    = f.select :id, push_user_dropdown_options(@users, current_user), :include_blank => true
-    = f.submit 'push'
+  - (0..story.users_needed - 1).each do |index|
 
+    = form_for :user, :url => push_story_path(story) do |f|
+      - if push = story.pushes.where(:user_id => current_user)[index]
+        - pushed_user = User.find(push.pushed_user_id)
+        = f.select :id, options_for_select([[pushed_user.username, pushed_user.id]])
+        = f.submit 'push', :disabled => true
+      - else
+        = f.select :id, push_user_dropdown_options(@users, story), :include_blank => true
+        = f.submit 'push'
   = form_for :user, :url => push_story_path(story) do |f|
     = f.hidden_field :id, :value => current_user.id
-    = f.submit 'pull'
+    = f.submit 'pull', :disabled => user_can_pull(story)
 
   = story.description
   %ul

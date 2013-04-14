@@ -41,11 +41,19 @@ class StoriesController < ApplicationController
   def push
     if params[:user][:id].present?
       user = User.find(params[:user][:id])
-      @story.push(user)
-      if user == current_user
-        flash[:notice] = 'Story pulled'
-      else
-        flash[:notice] = "Story pushed towards #{user.username}"
+
+      if @story.has_pushes_left(current_user) && user.can_be_pushed(@story, current_user)
+        @story.push(user)
+        push = current_user.pushes.new(:pushed_user_id => user.id)
+        push.story = @story
+        push.save
+
+        if user == current_user
+          flash[:notice] = 'Story pulled'
+        else
+          flash[:notice] = "Story pushed towards #{user.username}"
+        end
+
       end
     end
     redirect_to stories_path

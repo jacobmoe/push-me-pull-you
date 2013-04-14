@@ -112,12 +112,14 @@ class StoriesControllerTest < ActionController::TestCase
     user_story = @story.user_stories.where(:user_id => user).first
     assert_equal 0, user_story.distance
 
-    post :push, {
-      :id => @story, 
-      :user => {
-        :id => user
+    assert_difference 'Push.count' do
+      post :push, {
+        :id => @story, 
+        :user => {
+          :id => user
+        }
       }
-    }
+    end
 
     user_story.reload
     assert_equal 1, user_story.distance
@@ -131,17 +133,84 @@ class StoriesControllerTest < ActionController::TestCase
     user_story = @story.user_stories.where(:user_id => @user).first
     assert_equal 0, user_story.distance
 
-    post :push, {
-      :id => @story, 
-      :user => {
-        :id => @user
+    assert_difference 'Push.count' do
+      post :push, {
+        :id => @story, 
+        :user => {
+          :id => @user
+        }
       }
-    }
+    end
 
     user_story.reload
     assert_equal 1, user_story.distance
     assert_equal 'Story pulled', flash[:notice]
   end
+
+  def test_push_when_user_has_already_been_pushed
+    @story.update_column(:users_needed, 2)
+
+    pushed_user = users(:two)
+    @user.stories << @story
+    @user.save
+
+    push = @user.pushes.new(:pushed_user_id => pushed_user.id)
+    push.story = @story
+    push.save
+    @user.reload
+
+    assert_no_difference 'Push.count' do
+      post :push, {
+        :id => @story, 
+        :user => {
+          :id => pushed_user.id
+        }
+      }
+    end
+
+    assert_response :redirect
+    assert_redirected_to stories_path
+    assert_equal nil, flash[:notice]
+  end
+
+  def test_push_when_story_is_fully_pushed
+    @story.update_column(:users_needed, 2)
+
+    pushed_user = users(:two)
+    @user.stories << @story
+    @user.save
+
+    push = @user.pushes.new(:pushed_user_id => pushed_user.id)
+    push.story = @story
+    push.save
+
+    third_user = User.create(
+      :username => 'third user', 
+      :email => 'third@email.com',
+      :password => 'pass',
+      :password_confirmation => 'pass'
+    )
+
+    push = @user.pushes.new(:pushed_user_id => third_user.id)
+    push.story = @story
+    push.save
+
+    @user.reload
+
+    assert_no_difference 'Push.count' do
+      post :push, {
+        :id => @story, 
+        :user => {
+          :id => @user
+        }
+      }
+    end
+
+    assert_response :redirect
+    assert_redirected_to stories_path
+    assert_equal nil, flash[:notice]
+  end
+
 
 
 end

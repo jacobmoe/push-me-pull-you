@@ -3,13 +3,14 @@ class Story < ActiveRecord::Base
   # -- validations ----------------------------------------------------------
 
   validates :description, :presence => true
-  validates :number_of_users, :presence => true
+  validates :users_needed, :presence => true
 
   # -- relationships --------------------------------------------------------
 
   has_many :tasks, :dependent => :destroy
   has_many :user_stories, :dependent => :destroy
   has_many :users, :through => :user_stories
+  has_many :pushes, :dependent => :destroy
 
   # -- callbacks ------------------------------------------------------------
 
@@ -21,6 +22,10 @@ class Story < ActiveRecord::Base
     user_story = self.user_stories.where(:user_id => user).first
     user_story.distance += 1
     user_story.save
+  end
+
+  def has_pushes_left(current_user)
+    current_user.pushes.where(:story_id => self).count < self.users_needed
   end
 
   private
