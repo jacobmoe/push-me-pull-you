@@ -30,7 +30,7 @@ class StoriesControllerTest < ActionController::TestCase
   end
 
   def test_creation
-    assert_difference 'Story.count' do
+    assert_difference ['Story.count'] do
       post :create, :story => {
         :description => 'test story description',
         :estimate => 1
@@ -91,7 +91,11 @@ class StoriesControllerTest < ActionController::TestCase
   end
 
   def test_destroy
-    assert_difference 'Story.count', -1 do
+    @user.stories << @story
+    @user.save
+    assert_equal 1, @story.tasks.count
+    assert_equal 1, @story.user_stories.count
+    assert_difference ['Story.count', 'Task.count', 'UserStory.count'], -1 do
       delete :destroy, :id => @story
       assert_response :redirect
       assert_redirected_to stories_path

@@ -6,6 +6,14 @@ class UsersControllerTest < ActionController::TestCase
     login_user(@user = users(:one))
   end
 
+  def test_get_index
+    get :index
+    assert_response :success
+    assert_template :index
+    assert assigns(:users)
+    assert_equal 2, assigns(:users).count
+  end
+
   def test_get_new
     get :new
     assert_response :success
@@ -93,7 +101,13 @@ class UsersControllerTest < ActionController::TestCase
     assert_not_equal '', user.username
   end
 
-
-
+  def test_add_all_stories
+    assert_difference 'UserStory.count', 2 do
+      post :add_all_stories, :id => @user
+    end
+    assert_response :redirect
+    assert_redirected_to users_path
+    assert_equal "Stories added to #{@user.username}", flash[:notice]
+  end
 
 end

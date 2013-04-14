@@ -3,7 +3,11 @@ class UsersController < ApplicationController
   skip_before_filter :require_login, :only => [:new, :create]
   before_filter :user_params, :only => [:create, :update]
   before_filter :build_user, :only => [:create]
-  before_filter :load_user, :only => [:show, :edit, :update, :destroy]
+  before_filter :load_user, :only => [:show, :edit, :update, :destroy, :add_all_stories]
+
+  def index
+    @users = User.all
+  end
 
   def show
   end
@@ -30,6 +34,12 @@ class UsersController < ApplicationController
   rescue ActiveRecord::RecordInvalid
     flash.now[:error] = 'Failed to update profile information'
     render :action => :edit
+  end
+
+  def add_all_stories
+    @user.add_all_stories
+    flash[:notice] = "Stories added to #{@user.username}"
+    redirect_to users_path
   end
 
   protected

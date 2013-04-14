@@ -9,7 +9,11 @@ PushMePullYou::Application.routes.draw do
   get   'signup' => 'users#new', :as => :signup
   post  'signup' => 'users#create'
 
-  resources :users
+  resources :users do
+    member do
+      post :add_all_stories
+    end
+  end
   resources :stories do
     resources :tasks, :except => [:show, :index]
   end

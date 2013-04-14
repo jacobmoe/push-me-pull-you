@@ -8,6 +8,13 @@ class UserSessionsControllerTest < ActionController::TestCase
     assert_template :new
   end
 
+  def test_get_new_when_logged_in
+    login_user(users(:one))
+    get :new
+    assert_response :redirect
+    assert_redirected_to user_path(users(:one))
+  end
+
   def test_creation
     user = users(:one)
     post :create, :session => {

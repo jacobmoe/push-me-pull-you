@@ -3,7 +3,11 @@ class UserSessionsController < ApplicationController
   skip_before_filter :require_login, :except => [:destroy]
 
   def new
-    render
+    if logged_in? 
+      redirect_to user_path(current_user)
+    else
+      render
+    end
   end
 
   def create
