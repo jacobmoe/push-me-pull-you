@@ -101,13 +101,4 @@ class UsersControllerTest < ActionController::TestCase
     assert_not_equal '', user.username
   end
 
-  def test_add_all_stories
-    assert_difference 'UserStory.count', 2 do
-      post :add_all_stories, :id => @user
-    end
-    assert_response :redirect
-    assert_redirected_to users_path
-    assert_equal "Stories added to #{@user.username}", flash[:notice]
-  end
-
 end

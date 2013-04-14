@@ -12,5 +12,20 @@ class Story < ActiveRecord::Base
 
   # -- callbacks ------------------------------------------------------------
 
+  after_create :add_all_users
+
+  # -- instance_methods -----------------------------------------------------
+
+  private
+
+  def add_all_users
+    User.all.each do |user|
+      unless self.users.include? user
+        self.users << user
+        self.save
+      end
+    end
+
+  end
 
 end

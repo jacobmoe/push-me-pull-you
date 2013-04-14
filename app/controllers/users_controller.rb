@@ -36,12 +36,6 @@ class UsersController < ApplicationController
     render :action => :edit
   end
 
-  def add_all_stories
-    @user.add_all_stories
-    flash[:notice] = "Stories added to #{@user.username}"
-    redirect_to users_path
-  end
-
   protected
 
   def user_params
