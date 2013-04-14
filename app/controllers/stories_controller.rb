@@ -5,7 +5,8 @@ class StoriesController < ApplicationController
   before_filter :load_story, :only => [:show, :edit, :update, :destroy, :push]
 
   def index
-    @stories = Story.all.order('created_at DESC')
+    @users = User.all
+    @stories = Story.all
   end
 
   def new
@@ -38,9 +39,15 @@ class StoriesController < ApplicationController
   end
 
   def push
-    user = User.find(params[:user][:id])
-    @story.push(user)
-    flash[:notice] = "Story pushed towards #{user.username}"
+    if params[:user][:id].present?
+      user = User.find(params[:user][:id])
+      @story.push(user)
+      if user == current_user
+        flash[:notice] = 'Story pulled'
+      else
+        flash[:notice] = "Story pushed towards #{user.username}"
+      end
+    end
     redirect_to stories_path
   end
 

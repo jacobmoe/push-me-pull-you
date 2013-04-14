@@ -1,0 +1,22 @@
+%li
+  = story.created_at.strftime('%B %d, %Y, %T')
+
+  = link_to 'edit', edit_story_path(story)
+  = link_to 'delete', story_path(story), :method => :delete, :data => {:confirm => 'delete story?'}
+  = link_to 'add task', new_story_task_path(story)
+
+  = form_for :user, :url => push_story_path(story) do |f|
+    = f.select :id, push_user_dropdown_options(@users, current_user), :include_blank => true
+    = f.submit 'push'
+
+  = form_for :user, :url => push_story_path(story) do |f|
+    = f.hidden_field :id, :value => current_user.id
+    = f.submit 'pull'
+
+  = story.description
+  %ul
+    - story.tasks.each do |task|
+      %li
+        = task.description
+        = link_to 'edit', edit_story_task_path(story, task)
+        = link_to 'delete', story_task_path(story, task), :method => :delete, :data => {:confirm => 'delete task?'}

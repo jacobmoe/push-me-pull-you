@@ -3,6 +3,7 @@ class Story < ActiveRecord::Base
   # -- validations ----------------------------------------------------------
 
   validates :description, :presence => true
+  validates :number_of_users, :presence => true
 
   # -- relationships --------------------------------------------------------
 

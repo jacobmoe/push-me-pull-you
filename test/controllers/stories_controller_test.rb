@@ -13,6 +13,7 @@ class StoriesControllerTest < ActionController::TestCase
     assert_template :index
     assert assigns(:stories)
     assert_equal 2, assigns(:stories).count
+    assert assigns(:users)
   end
 
   def test_get_new
@@ -112,14 +113,35 @@ class StoriesControllerTest < ActionController::TestCase
     assert_equal 0, user_story.distance
 
     post :push, {
-      :id => @story.id, 
+      :id => @story, 
       :user => {
-        :id => user.id
+        :id => user
       }
     }
 
     user_story.reload
     assert_equal 1, user_story.distance
+    assert_equal "Story pushed towards #{user.username}", flash[:notice]
   end
+
+  def test_pull
+    @user.stories << @story
+    @user.save
+
+    user_story = @story.user_stories.where(:user_id => @user).first
+    assert_equal 0, user_story.distance
+
+    post :push, {
+      :id => @story, 
+      :user => {
+        :id => @user
+      }
+    }
+
+    user_story.reload
+    assert_equal 1, user_story.distance
+    assert_equal 'Story pulled', flash[:notice]
+  end
+
 
 end

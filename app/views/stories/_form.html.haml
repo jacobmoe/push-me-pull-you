@@ -1,1 +1,6 @@
+%label description
 = form.text_area :description
+%br
+%label number of users
+= form.number_field :number_of_users, :value => (@story ? @story.number_of_users : 1)
+%br
